@@ -31,9 +31,9 @@ Demo Time
 
 * Get ready
 
-
+```
     $ pip install redis
-
+```
 
 * Start a Redis server to data storage
 
