@@ -31,27 +31,39 @@ Demo Time
 
 * Get ready
 
+
     $ pip install redis
+
 
 * Start a Redis server to data storage
 
+
     $ redis-server &
+
 
 * Start `Publisher`
 
+
     $ python -m dotter.publisher /tmp/data.mmap 1000 &
+
 
 * Start `Borker` to transfer data to `Displayer`
 
+
     $ python -m dotter.broker /tmp/data.mmap 0.1 http://localhost:8000/data &
+
 
 * Start `Collector` receive from `Broker`
 
+
     $ python app.py
+
 
 * Go to `Displayer` to view time series
 
+
     $ open http://localhost:8000/static/index.html
+
 
 
 Benchmark
