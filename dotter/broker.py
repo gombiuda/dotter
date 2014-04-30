@@ -3,8 +3,7 @@
 import sys
 import time
 import json
-
-import requests
+import urllib2
 
 from . import dotter
 
@@ -13,7 +12,10 @@ def main(path, poll, remote):
     subscriber = dotter.Broker(path)
     while True:
         dots = subscriber.read()
-        response = requests.post(remote, json.dumps(dots))
+        try:
+            response = urllib2.urlopen(remote, json.dumps(dots))
+        except Exception:
+            pass
         time.sleep(poll)
 
 

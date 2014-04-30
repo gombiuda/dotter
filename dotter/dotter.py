@@ -1,13 +1,14 @@
 # coding: utf-8
 
 import os
+import sys
 import time
-import mmap
 import struct
 import unittest
 
 class Dotter(object):
     def __init__(self, path):
+        import mmap
         self.fd = open(path, 'rb+')
         if os.stat(path).st_size % 16 != 0:
             raise ValueError('mmap size invalid')
@@ -43,6 +44,7 @@ class Dotter(object):
 
 class Broker(object):
     def __init__(self, path):
+        import mmap
         self.fd = open(path, 'rb+')
         if os.stat(path).st_size % 16 != 0:
             raise ValueError('mmap size invalid')
@@ -69,10 +71,28 @@ class Broker(object):
         return dots
 
 
-class TestDotter(unittest.TestCase):
+def benchmark(path, size):
+    import random
+    dotter = Dotter.create(path, size)
+
+    count = 0
+    start = time.time()
+    while True:
+        dotter.dot(time.time(), random.random())
+        count += 1
+        if count % 10000 == 0:
+            print 'Speed: %s dots per second' % (1 / (time.time() - start) * 10000)
+            count = 0
+            start = time.time()
+
+
+class DotterTestCase(unittest.TestCase):
     def setUp(self):
         self.dotter = Dotter.create('/tmp/foo.mmap', 100)
         self.broker = Broker('/tmp/foo.mmap')
+
+    def tearDown(self):
+        os.remove('/tmp/foo.mmap')
 
     def test_read_1(self):
         dots = []
@@ -99,4 +119,8 @@ class TestDotter(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    if sys.argv[1] == 'test':
+        unittest.main(argv=[sys.argv[0]])
+    elif sys.argv[1] == 'benchmark':
+        benchmark(sys.argv[2], int(sys.argv[3]))
+        time.sleep(1)

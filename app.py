@@ -6,16 +6,7 @@ import json
 
 import redis
 
-from dotter import dotter
-
-try:
-    from igor import const
-    redis_config = const.redis
-except ImportError:
-    redis_config = {'host': os.environ.get('REDIS_HOST', 'localhost'),
-                    'port': os.environ.get('REDIS_PORT', 6379)}
-
-rc = redis.StrictRedis(**redis_config)
+rc = redis.StrictRedis()
 
 
 def application(environ, start_response):
@@ -40,6 +31,7 @@ def application(environ, start_response):
         start_response('200 OK', [])
         with open(environ['PATH_INFO'].strip('/')) as f:
             return [f.read()]
+
 
 def main():
     from wsgiref.simple_server import make_server
