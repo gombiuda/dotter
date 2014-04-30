@@ -29,8 +29,6 @@ class Dotter(object):
         if pos_w > pos_r and pos_w % self.size == pos_r % self.size:
             pos_w -= 1
         self.trunk.seek(16 + (pos_w % self.size) * 16)
-        # print pos_r, pos_w, self.size
-        # print 16 + (pos_w % self.size) * 16
         self.trunk.write(struct.pack('dd', float(timestamp), float(value)))
         self.trunk.seek(0)
         self.trunk.write(struct.pack('Q', pos_w + 1))
@@ -95,7 +93,6 @@ class TestDotter(unittest.TestCase):
 
     def test_read_much(self):
         for i in range(10000):
-            # print 'Round: %s' % i
             dot = (time.time(), float(i))
             self.dotter.dot(dot[0], dot[1])
             self.assertEqual(dot, self.broker.read(1)[0])
